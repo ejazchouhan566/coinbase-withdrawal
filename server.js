@@ -34,3 +34,26 @@ app.post('/withdraw', async (req, res) => {
 });
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+require('dotenv').config();
+const mysql = require('mysql2');
+
+const pool = mysql.createPool(process.env.DATABASE_URL + "?ssl={" +
+    '"rejectUnauthorized":true' +
+    "}"
+).promise();
+
+async function createTable() {
+    const query = `
+        CREATE TABLE IF NOT EXISTS withdrawals (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            user_id VARCHAR(50) NOT NULL,
+            amount DECIMAL(10,2) NOT NULL,
+            currency VARCHAR(10) NOT NULL,
+            status ENUM('pending', 'approved', 'rejected') DEFAULT 'pending',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+    `;
+    await pool.query(query);
+}
+
+createTable().then(() => console.log("Database Ready")).catch(console.error);
