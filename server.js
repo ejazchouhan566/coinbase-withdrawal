@@ -1,11 +1,17 @@
-require('dotenv').config();
+require('dotenv').config(); // Load environment variables
+
 const express = require('express');
 const axios = require('axios');
+const cors = require('cors');
 
 const app = express();
 app.use(express.json());
+app.use(cors()); 
 
-const API_KEY = process.env.65174f01-ff69-48c5-a0c6-cfc4ed9d56f6; // Store API Key securely
+// Load API Key from environment
+const API_KEY = process.env.COINBASE_API_KEY;
+
+const PORT = process.env.PORT || 3000; // Use Railway's port or default to 3000
 
 app.post('/withdraw', async (req, res) => {
     const { user_id, amount, currency } = req.body;
@@ -27,4 +33,4 @@ app.post('/withdraw', async (req, res) => {
     }
 });
 
-app.listen(3000, () => console.log("Server running on port 3000"));
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
